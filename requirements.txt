@@ -1,0 +1,6 @@
+mosestokenizer==1.2.1
+nltk==3.8.1
+numpy==1.24.2
+pandas==2.0.0
+scipy==1.10.1
+tqdm==4.65.0
