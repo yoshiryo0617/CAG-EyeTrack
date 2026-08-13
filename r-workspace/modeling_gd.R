@@ -117,27 +117,28 @@ data$prev_freq = scale(log2(data$prev_freq))
 
 data = data[data$is_sent_first=="False", ]
 data = data[data$is_sent_last=="False", ]
-# data = data[data$max_word_id <= mean(data$max_word_id),]
 
-# hist
-hist(log(data$GD))
-dev.off()
-kurtosis(log(data$GD))
+# hist (exploratory; skipped in non-interactive runs)
+if (interactive()) {
+  hist(log(data$GD))
+  dev.off()
+  kurtosis(log(data$GD))
 
-hist(data$length)
-hist(data$prev_length)
+  hist(data$length)
+  hist(data$prev_length)
 
-hist(data$freq)
-hist(data$prev_freq)
+  hist(data$freq)
+  hist(data$prev_freq)
 
-hist(data$screen_N)
-hist(data$line_N)
-hist(data$segment_N)
+  hist(data$screen_N)
+  hist(data$line_N)
+  hist(data$segment_N)
 
-hist(data$sent_id)
-hist(data$word_id)
+  hist(data$sent_id)
+  hist(data$word_id)
+}
 
-# fitting whole head baseline
+# fitting baseline
 control = lmerControl(optCtrl=list(maxfun=100000))
 GD_lmer = lmer(
   log(GD) ~ length + prev_length + freq + prev_freq + sent_id + word_id + (1 |subj),
@@ -340,7 +341,7 @@ summary(GD_lmer_lstm_ave)
 # anova
 ## anova cag
 anova(GD_lmer, GD_lmer_cag_seed3435)
-loglik_cag_3435 = logLik(GD_lmer_cag_seed3435) - logLik(GD_lmer) # best
+loglik_cag_3435 = logLik(GD_lmer_cag_seed3435) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_cag_seed3436)
 loglik_cag_3436 = logLik(GD_lmer_cag_seed3436) - logLik(GD_lmer) 
@@ -366,7 +367,7 @@ anova(GD_lmer, GD_lmer_rnng_seed3436)
 loglik_rnng_3436 = logLik(GD_lmer_rnng_seed3436) - logLik(GD_lmer) 
 
 anova(GD_lmer, GD_lmer_rnng_seed3437)
-loglik_rnng_3437 = logLik(GD_lmer_rnng_seed3437) - logLik(GD_lmer)  # best
+loglik_rnng_3437 = logLik(GD_lmer_rnng_seed3437) - logLik(GD_lmer)
 
 loglik_rnng = c(loglik_rnng_3435,loglik_rnng_3436,loglik_rnng_3437)
 print(loglik_rnng)
@@ -385,7 +386,7 @@ anova(GD_lmer, GD_lmer_plm_seed3436)
 loglik_plm_3436 = logLik(GD_lmer_plm_seed3436) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_plm_seed3437)
-loglik_plm_3437 = logLik(GD_lmer_plm_seed3437) - logLik(GD_lmer) # best
+loglik_plm_3437 = logLik(GD_lmer_plm_seed3437) - logLik(GD_lmer)
 
 loglik_plm = c(loglik_plm_3435,loglik_plm_3436,loglik_plm_3437)
 print(loglik_plm)
@@ -400,7 +401,7 @@ anova(GD_lmer, GD_lmer_actionlstm_seed3435)
 loglik_actionlstm_3435 = logLik(GD_lmer_actionlstm_seed3435) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_actionlstm_seed3436)
-loglik_actionlstm_3436 = logLik(GD_lmer_actionlstm_seed3436) - logLik(GD_lmer) # best
+loglik_actionlstm_3436 = logLik(GD_lmer_actionlstm_seed3436) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_actionlstm_seed3437)
 loglik_actionlstm_3437 = logLik(GD_lmer_actionlstm_seed3437) - logLik(GD_lmer) 
@@ -421,7 +422,7 @@ anova(GD_lmer, GD_lmer_transformer_seed3436)
 loglik_transformer_3436 = logLik(GD_lmer_transformer_seed3436) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_transformer_seed3437)
-loglik_transformer_3437 = logLik(GD_lmer_transformer_seed3437) - logLik(GD_lmer) # best
+loglik_transformer_3437 = logLik(GD_lmer_transformer_seed3437) - logLik(GD_lmer)
 
 loglik_transformer = c(loglik_transformer_3435,loglik_transformer_3436,loglik_transformer_3437)
 print(loglik_transformer)
@@ -439,7 +440,7 @@ anova(GD_lmer, GD_lmer_lstm_seed3436)
 loglik_lstm_3436 = logLik(GD_lmer_lstm_seed3436) - logLik(GD_lmer)
 
 anova(GD_lmer, GD_lmer_lstm_seed3437)
-loglik_lstm_3437 = logLik(GD_lmer_lstm_seed3437) - logLik(GD_lmer) # best
+loglik_lstm_3437 = logLik(GD_lmer_lstm_seed3437) - logLik(GD_lmer)
 
 loglik_lstm = c(loglik_lstm_3435,loglik_lstm_3436,loglik_lstm_3437)
 print(loglik_lstm)
@@ -619,25 +620,27 @@ anova(GD_lmer_lstm_ave, GD_lmer_actionlstm_lstm_ave)
 # Analysis for max_word_id above average
 dataAboveAverage = data[data$max_word_id >= mean(data$max_word_id),]
 
-# hist
-hist(log(dataAboveAverage$GD))
-dev.off()
-kurtosis(log(dataAboveAverage$GD))
+# hist (exploratory; skipped in non-interactive runs)
+if (interactive()) {
+  hist(log(dataAboveAverage$GD))
+  dev.off()
+  kurtosis(log(dataAboveAverage$GD))
 
-hist(dataAboveAverage$length)
-hist(dataAboveAverage$prev_length)
+  hist(dataAboveAverage$length)
+  hist(dataAboveAverage$prev_length)
 
-hist(dataAboveAverage$freq)
-hist(dataAboveAverage$prev_freq)
+  hist(dataAboveAverage$freq)
+  hist(dataAboveAverage$prev_freq)
 
-hist(dataAboveAverage$screen_N)
-hist(dataAboveAverage$line_N)
-hist(dataAboveAverage$segment_N)
+  hist(dataAboveAverage$screen_N)
+  hist(dataAboveAverage$line_N)
+  hist(dataAboveAverage$segment_N)
 
-hist(dataAboveAverage$sent_id)
-hist(dataAboveAverage$word_id)
+  hist(dataAboveAverage$sent_id)
+  hist(dataAboveAverage$word_id)
+}
 
-# fitting whole head baseline
+# fitting baseline
 control = lmerControl(optCtrl=list(maxfun=100000))
 GD_lmer_above = lmer(
   log(GD) ~ length + prev_length + freq + prev_freq + sent_id + word_id + (1 |subj),
@@ -722,7 +725,7 @@ summary(GD_lmer_rnng_seed3437_above)
 # anova
 ## anova cag
 anova(GD_lmer_above, GD_lmer_cag_seed3435_above)
-loglik_cag_3435_above = logLik(GD_lmer_cag_seed3435_above) - logLik(GD_lmer_above) # best
+loglik_cag_3435_above = logLik(GD_lmer_cag_seed3435_above) - logLik(GD_lmer_above)
 
 anova(GD_lmer_above, GD_lmer_cag_seed3436_above)
 loglik_cag_3436_above = logLik(GD_lmer_cag_seed3436_above) - logLik(GD_lmer_above) 
@@ -748,7 +751,7 @@ anova(GD_lmer_above, GD_lmer_rnng_seed3436_above)
 loglik_rnng_3436_above = logLik(GD_lmer_rnng_seed3436_above) - logLik(GD_lmer_above) 
 
 anova(GD_lmer_above, GD_lmer_rnng_seed3437_above)
-loglik_rnng_3437_above = logLik(GD_lmer_rnng_seed3437_above) - logLik(GD_lmer_above)  # best
+loglik_rnng_3437_above = logLik(GD_lmer_rnng_seed3437_above) - logLik(GD_lmer_above)
 
 loglik_rnng_above = c(loglik_rnng_3435_above,loglik_rnng_3436_above,loglik_rnng_3437_above)
 print(loglik_rnng_above)
@@ -775,25 +778,27 @@ anova(GD_lmer_rnng_ave_above, GD_lmer_cag_rnng_ave_above)
 # Analysis for max_word_id below average
 dataBelowAverage = data[data$max_word_id < mean(data$max_word_id),]
 
-# hist
-hist(log(dataBelowAverage$GD))
-dev.off()
-kurtosis(log(dataBelowAverage$GD))
+# hist (exploratory; skipped in non-interactive runs)
+if (interactive()) {
+  hist(log(dataBelowAverage$GD))
+  dev.off()
+  kurtosis(log(dataBelowAverage$GD))
 
-hist(dataBelowAverage$length)
-hist(dataBelowAverage$prev_length)
+  hist(dataBelowAverage$length)
+  hist(dataBelowAverage$prev_length)
 
-hist(dataBelowAverage$freq)
-hist(dataBelowAverage$prev_freq)
+  hist(dataBelowAverage$freq)
+  hist(dataBelowAverage$prev_freq)
 
-hist(dataBelowAverage$screen_N)
-hist(dataBelowAverage$line_N)
-hist(dataBelowAverage$segment_N)
+  hist(dataBelowAverage$screen_N)
+  hist(dataBelowAverage$line_N)
+  hist(dataBelowAverage$segment_N)
 
-hist(dataBelowAverage$sent_id)
-hist(dataBelowAverage$word_id)
+  hist(dataBelowAverage$sent_id)
+  hist(dataBelowAverage$word_id)
+}
 
-# fitting whole head baseline
+# fitting baseline
 control = lmerControl(optCtrl=list(maxfun=100000))
 GD_lmer_below = lmer(
   log(GD) ~ length + prev_length + freq + prev_freq + sent_id + word_id + (1 |subj),
@@ -878,7 +883,7 @@ summary(GD_lmer_rnng_seed3437_below)
 # anova
 ## anova cag
 anova(GD_lmer_below, GD_lmer_cag_seed3435_below)
-loglik_cag_3435_below = logLik(GD_lmer_cag_seed3435_below) - logLik(GD_lmer_below) # best
+loglik_cag_3435_below = logLik(GD_lmer_cag_seed3435_below) - logLik(GD_lmer_below)
 
 anova(GD_lmer_below, GD_lmer_cag_seed3436_below)
 loglik_cag_3436_below = logLik(GD_lmer_cag_seed3436_below) - logLik(GD_lmer_below) 
@@ -904,7 +909,7 @@ anova(GD_lmer_below, GD_lmer_rnng_seed3436_below)
 loglik_rnng_3436_below = logLik(GD_lmer_rnng_seed3436_below) - logLik(GD_lmer_below) 
 
 anova(GD_lmer_below, GD_lmer_rnng_seed3437_below)
-loglik_rnng_3437_below = logLik(GD_lmer_rnng_seed3437_below) - logLik(GD_lmer_below)  # best
+loglik_rnng_3437_below = logLik(GD_lmer_rnng_seed3437_below) - logLik(GD_lmer_below)
 
 loglik_rnng_below = c(loglik_rnng_3435_below,loglik_rnng_3436_below,loglik_rnng_3437_below)
 print(loglik_rnng_below)

@@ -12,6 +12,7 @@
 !/r-workspace/results/.gitkeep
 /r-workspace/.RData
 /r-workspace/.Rhistory
+/r-workspace/Rplots.pdf
 .Rproj.user
 
 # --- Generic ------------------------------------------------------------

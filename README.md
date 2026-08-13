@@ -75,9 +75,8 @@ model, with two tasks and three seeds each:
 
 The implementations that produced them are released separately:
 
-- CAG and CAG-comp: [osekilab/CAG](https://github.com/osekilab/CAG)
+- CAG: [osekilab/CAG](https://github.com/osekilab/CAG)
 - RNNG: [yoshiryo0617/rnng-pytorch](https://github.com/yoshiryo0617/rnng-pytorch)
-- RNNG-comp, Transformer and LSTM: please contact the authors.
 
 ### Preprocessing
 
