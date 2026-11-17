@@ -27,8 +27,8 @@ zuco_gd_root = if (length(args) >= 1) args[1] else '../data/zuco_gd'
 
 is_true = function(x) toupper(as.character(x)) == 'TRUE'
 
-# POS tags with fewer occurrences than this in all data points (before exclusion) are
-# collapsed into "Other".
+# Within each word class, POS tags with fewer occurrences than this in all data points
+# (before exclusion) are collapsed into "Other".
 MIN_COUNT = 1000
 
 # all words
@@ -91,38 +91,50 @@ for (cl in c('Content words', 'Function words')) {
 }
 cat('\n')
 
-# table
+# table: tags are grouped by word class, and within each class, tags with fewer than
+# MIN_COUNT occurrences in all data points are collapsed into "Other"
 count_by = function(x, levels) as.vector(table(factor(x, levels = levels)))
 
-tags = names(sort(table(all_words$pos), decreasing = TRUE))
-n_all = count_by(all_words$pos, tags)
-n_analyzed = count_by(analyzed$pos, tags)
-frequent = n_all >= MIN_COUNT
-
 classes = c('Content words', 'Function words')
-rows = data.frame(
-  label = c(tags[frequent], 'Other', classes, 'Total'),
-  group = c(rep('pos', sum(frequent)), 'pos', rep('class', 2), 'total'),
-  all = c(n_all[frequent], sum(n_all[!frequent]), count_by(all_words$class, classes), nrow(all_words)),
-  analyzed = c(n_analyzed[frequent], sum(n_analyzed[!frequent]), count_by(analyzed$class, classes), nrow(analyzed))
-)
+rows = NULL
+for (cl in classes) {
+  in_class = all_words$class == cl
+  tags = names(sort(table(all_words$pos[in_class]), decreasing = TRUE))
+  n_all = count_by(all_words$pos[in_class], tags)
+  n_analyzed = count_by(analyzed$pos[analyzed$class == cl], tags)
+  frequent = n_all >= MIN_COUNT
+  cat(cl, '- tags collapsed into Other:', paste(tags[!frequent], collapse = ', '), '\n')
+  rows = rbind(rows, data.frame(
+    class = cl,
+    label = c(tags[frequent], 'Other', 'Subtotal'),
+    group = c(rep('pos', sum(frequent) + 1), 'subtotal'),
+    all = c(n_all[frequent], sum(n_all[!frequent]), sum(in_class)),
+    analyzed = c(n_analyzed[frequent], sum(n_analyzed[!frequent]), sum(analyzed$class == cl))
+  ))
+}
+rows = rbind(rows, data.frame(class = '', label = 'Total', group = 'total',
+                              all = nrow(all_words), analyzed = nrow(analyzed)))
 rows$all_pct = 100 * rows$all / nrow(all_words)
 rows$analyzed_pct = 100 * rows$analyzed / nrow(analyzed)
 rows$excluded_pct = 100 * (rows$all - rows$analyzed) / rows$all
+cat('\n')
 
 dir.create('results', showWarnings = FALSE)
 write.csv(rows, 'results/pos_distribution.csv', row.names = FALSE)
 
-cat('Tags collapsed into Other:', paste(tags[!frequent], collapse = ', '), '\n\n')
-
 fmt_n = function(n) formatC(n, format = 'd', big.mark = ',')
 fmt_label = function(label, group) {
-  if (group != 'pos' || label == 'Other') return(label)
-  paste0('\\texttt{', gsub('$', '\\$', label, fixed = TRUE), '}')
+  if (group == 'total') return(label)
+  if (group == 'subtotal' || label == 'Other') return(paste0('\\quad ', label))
+  paste0('\\quad\\texttt{', gsub('$', '\\$', label, fixed = TRUE), '}')
 }
 cat('LaTeX rows\n')
 for (i in seq_len(nrow(rows))) {
-  if (rows$group[i] != rows$group[max(i - 1, 1)]) cat('\\midrule\n')
+  if (i == 1 || rows$class[i] != rows$class[i - 1]) {
+    if (i > 1) cat('\\midrule\n')
+    if (rows$group[i] != 'total') cat(sprintf('\\multicolumn{4}{l}{\\textit{%s}} \\\\\n', rows$class[i]))
+  }
+  if (rows$group[i] == 'subtotal') cat('\\cmidrule(l){1-4}\n')
   cat(sprintf('%s & %s (%.1f) & %s (%.1f) & %.1f \\\\\n',
               fmt_label(rows$label[i], rows$group[i]),
               fmt_n(rows$all[i]), rows$all_pct[i],
