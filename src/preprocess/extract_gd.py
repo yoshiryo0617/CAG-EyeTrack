@@ -174,7 +174,7 @@ def gen_nan_word_stat(
     word_stat["length"] = len(word)
     word_stat["freq"] = calc_freq(word, tokenizer, word_freq)
 
-    pos = poses[word_id][0]
+    pos = poses[word_id][1]
     word_stat["pos"] = pos
     word_stat["is_content"] = pos not in FUNCTION_WORD_POS
 

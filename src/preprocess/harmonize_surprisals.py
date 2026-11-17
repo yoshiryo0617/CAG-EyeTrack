@@ -40,8 +40,11 @@ COL2COL = {
     "surprisal": "surp",
 }
 
-# Sentences to drop, mirroring the `utils.ZuCo` module of the ZuCo release. The entry
-# keyed by subject `None` applies to every subject of that task.
+# Sentences to drop. The per-subject entries follow the `utils.ZuCo` module of the ZuCo
+# release. The entry keyed by subject `None` applies to every subject of that task:
+# sentence 10 of the NR task is dropped because its text in the ZuCo release contains a
+# spurious space within a word ("long -time"), so that its words cannot be aligned with
+# the model tokens.
 SKIPPED_SENT_IDS = {
     ("task1- SR", "ZDN_SR"): set(range(150, 250)) | {399},
     ("task2 - NR", None): {10},
