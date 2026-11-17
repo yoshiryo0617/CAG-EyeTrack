@@ -109,6 +109,22 @@ Rscript pos_distribution.R
 This prints the number of data points removed at each step and the rows of the table,
 and writes `r-workspace/results/pos_distribution.csv`.
 
+## Additional analysis: coefficient of determination (dissertation)
+
+This analysis is not part of the CoNLL 2025 paper; it is reported in a footnote to
+Chapter 3 of the author's doctoral dissertation. `r-workspace/r_squared.R` reports the
+marginal and conditional R^2 (Nakagawa and Schielzeth, 2013) of the baseline model and of
+the models with surprisal, fitted on the same data as in `modeling_gd.R`, together with
+their increases over the baseline. It only needs the bundled table:
+
+```bash
+cd r-workspace
+Rscript r_squared.R
+```
+
+This prints the mean over seeds for each language model and writes
+`r-workspace/results/r_squared.csv`.
+
 ## The analysis table
 
 `data/gd_analysis.csv.gz` has one row per word token that has a recorded first-pass gaze
@@ -140,6 +156,7 @@ scripts/                 shell wrappers for the preprocessing stages
 r-workspace/
   modeling_gd.R          mixed effects models, likelihood ratio tests and figures
   pos_distribution.R     POS distribution before and after data exclusion (dissertation)
+  r_squared.R            R^2 of the regression models (dissertation)
   renv.lock              R package versions
 ```
 
