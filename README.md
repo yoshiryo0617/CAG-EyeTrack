@@ -92,6 +92,23 @@ bash scripts/build_table.sh     # -> data/gd_analysis.csv.gz
 Word frequency is read from `data/wikitext-2_train_vocab.txt`, taken from
 [wilcoxeg/neural-networks-read-times](https://github.com/wilcoxeg/neural-networks-read-times).
 
+## Additional analysis: POS distribution (dissertation)
+
+This analysis is not part of the CoNLL 2025 paper; it is reported in the appendix to
+Chapter 3 of the author's doctoral dissertation. `r-workspace/pos_distribution.R`
+compares the part-of-speech distribution of all ZuCo data points with that of the data
+points used in the final statistical analysis, applying the same data exclusion as
+`modeling_gd.R`. Since it counts words without a gaze duration as well, it needs the
+output of `scripts/extract_gd.sh` (`data/zuco_gd/`) in addition to the bundled table:
+
+```bash
+cd r-workspace
+Rscript pos_distribution.R
+```
+
+This prints the number of data points removed at each step and the rows of the table,
+and writes `r-workspace/results/pos_distribution.csv`.
+
 ## The analysis table
 
 `data/gd_analysis.csv.gz` has one row per word token that has a recorded first-pass gaze
@@ -122,6 +139,7 @@ src/preprocess/          the four preprocessing stages
 scripts/                 shell wrappers for the preprocessing stages
 r-workspace/
   modeling_gd.R          mixed effects models, likelihood ratio tests and figures
+  pos_distribution.R     POS distribution before and after data exclusion (dissertation)
   renv.lock              R package versions
 ```
 
